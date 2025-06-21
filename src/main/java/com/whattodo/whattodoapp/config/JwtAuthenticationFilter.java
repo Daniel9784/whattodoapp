@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        // Extract the JWT token from the Authorization header
+        // Extract the JWT token (string) from the Authorization header
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Checking if the extracted user exists and if the JWT token is valid
             if (user != null && jwtService.isTokenValid(jwt, username)) {
 
-                // Create an authentication token with user details and set it in the security context
+                // Create an authentication token (object) with user details and set it in the security context
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         user, null, Collections.emptyList());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
