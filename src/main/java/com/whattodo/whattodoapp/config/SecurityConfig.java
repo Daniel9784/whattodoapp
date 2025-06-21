@@ -1,7 +1,10 @@
 package com.whattodo.whattodoapp.config;
 
+import com.whattodo.whattodoapp.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,32 +17,39 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // JWT Authentication Filter
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomUserDetailsService userDetailsService;
 
-    // Constructor injection for JwtAuthenticationFilter
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    // Constructor-based dependency injection for JwtAuthenticationFilter and CustomUserDetailsService
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          CustomUserDetailsService userDetailsService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.userDetailsService = userDetailsService;
     }
 
-    // Password encoder bean for encoding passwords
+    // Bean for PasswordEncoder to encode passwords securely
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Security filter chain configuration
+    // Bean for AuthenticationManager to manage authentication processes
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    // Security filter chain configuration to set up HTTP security
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register").permitAll()
-                .anyRequest().authenticated()
-            )
-                // Add JWT Authentication Filter before UsernamePasswordAuthenticationFilter
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/register").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

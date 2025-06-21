@@ -3,12 +3,14 @@ package com.whattodo.whattodoapp.service;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -38,6 +40,19 @@ public class JwtService {
                 .compact();
     }
 
+    /**
+     * Overloaded convenience method to generate a JWT token directly from a UserDetails object.
+     * This simplifies token creation by avoiding manual claims construction.
+     */
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = Map.of(
+                "roles", userDetails.getAuthorities().stream()
+                        .map(auth -> auth.getAuthority())
+                        .toList()
+        );
+        return generateToken(userDetails.getUsername(), claims);
+    }
+
     // Extracts the username from the JWT token
     public String extractUsername(String token) {
         return extractClaim(token, claims -> claims.getSubject());
@@ -54,13 +69,19 @@ public class JwtService {
     }
 
     // Checks if the JWT token is valid for the given username
-    public boolean isTokenValid(String token, String username) {
-        final String extractedUsername = extractUsername(token);
-        return (extractedUsername.equals(username) && !isTokenExpired(token));
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     // Checks if the JWT token is expired
     private boolean isTokenExpired(String token) {
         return extractClaim(token, claims -> claims.getExpiration()).before(new Date());
+    }
+
+    // Extracts the roles from the JWT token
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(String token) {
+        return extractClaim(token, claims -> (List<String>) claims.get("roles"));
     }
 }
