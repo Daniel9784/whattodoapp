@@ -28,7 +28,17 @@ public class JwtService {
         key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Generates a JWT token with the given username and claims
+    /**
+     * Generates a JWT token using the given username and custom claims.
+     *
+     * ⚠ WARNING: This method should only be used internally with trusted inputs.
+     * Do NOT pass user-provided claims directly, as it may lead to security vulnerabilities.
+     * Always validate and sanitize any custom claims before including them in the token.
+     *
+     * @param username the username to include as the subject of the token
+     * @param claims additional claims to include in the token (e.g., roles)
+     * @return a signed JWT token
+     */
     public String generateToken(String username, Map<String, Object> claims) {
         long jwtExpirationMs = 86400000; // 1 day
         return Jwts.builder()

@@ -33,6 +33,9 @@ public class AuthService {
     }
 
     public ResponseEntity<?> register(RegisterRequest request) {
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Passwords do not match"));
+        }
         if (userRepository.existsByUsername(request.getUsername()) || userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Username or email already exists"));
         }
