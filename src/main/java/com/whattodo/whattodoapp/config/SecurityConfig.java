@@ -1,5 +1,6 @@
 package com.whattodo.whattodoapp.config;
 
+import com.whattodo.whattodoapp.config.loginlimit.LoginRateLimitFilter;
 import com.whattodo.whattodoapp.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,12 +20,15 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService userDetailsService;
+    private final LoginRateLimitFilter loginRateLimitFilter;
 
     // Constructor-based dependency injection for JwtAuthenticationFilter and CustomUserDetailsService
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-                          CustomUserDetailsService userDetailsService) {
+                          CustomUserDetailsService userDetailsService,
+                          LoginRateLimitFilter loginRateLimitFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userDetailsService = userDetailsService;
+        this.loginRateLimitFilter = loginRateLimitFilter;
     }
 
     // Bean for PasswordEncoder to encode passwords securely
@@ -49,8 +53,8 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(loginRateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 }
