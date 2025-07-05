@@ -34,6 +34,8 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         return authService.login(request);
     }
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public ResponseEntity<?> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
         var user = userDetails.getUser();
@@ -41,6 +43,14 @@ public class AuthController {
         response.put("username", user.getUsername());
         response.put("email", user.getEmail());
         response.put("roles", user.getRoles());
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/api/user/settings/current-email")
+    public ResponseEntity<?> getCurrentEmail(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Map<String, String> response = new HashMap<>();
+        response.put("email", userDetails.getUser().getEmail());
         return ResponseEntity.ok(response);
     }
 
