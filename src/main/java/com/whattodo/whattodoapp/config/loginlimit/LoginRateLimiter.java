@@ -19,8 +19,8 @@ public class LoginRateLimiter {
     }
 
     private Bucket newBucket(String ip) {
-        Bandwidth limit = Bandwidth.classic(5, Refill.greedy(5, Duration.ofMinutes(1)));
-        // 5 tokens per minute for 1 IP address
+        Bandwidth limit = Bandwidth.classic(10, Refill.greedy(5, Duration.ofMinutes(1)));
+        // 10 tokens per minute for 1 IP address
         return Bucket.builder()
                 .addLimit(limit)
                 .build();

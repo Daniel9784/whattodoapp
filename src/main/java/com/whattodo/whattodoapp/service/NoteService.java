@@ -4,8 +4,7 @@ import com.whattodo.whattodoapp.dto.NoteRequest;
 import com.whattodo.whattodoapp.model.Note.Note;
 import com.whattodo.whattodoapp.model.Note.NoteRepository;
 import com.whattodo.whattodoapp.model.User.User;
-import com.whattodo.whattodoapp.model.User.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.whattodo.whattodoapp.security.CustomUserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,17 +13,14 @@ import java.util.List;
 public class NoteService {
 
     private final NoteRepository noteRepository;
-    private final UserRepository userRepository;
 
-    @Autowired
-    public NoteService(NoteRepository noteRepository, UserRepository userRepository) {
+
+    public NoteService(NoteRepository noteRepository) {
         this.noteRepository = noteRepository;
-        this.userRepository = userRepository;
     }
 
-    public Note addNote(String username, NoteRequest noteRequest) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public Note addNote(CustomUserDetails userDetails, NoteRequest noteRequest) {
+        User user = userDetails.getUser();
 
         Note note = new Note();
         note.setCategory(noteRequest.getCategory());
@@ -34,9 +30,9 @@ public class NoteService {
         return noteRepository.save(note);
     }
 
-    public List<Note> getNotes(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public List<Note> getNotes(CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
         return noteRepository.findByUserId(user.getId());
     }
 }
+

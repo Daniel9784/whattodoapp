@@ -2,12 +2,13 @@ package com.whattodo.whattodoapp.controller;
 
 import com.whattodo.whattodoapp.dto.NoteRequest;
 import com.whattodo.whattodoapp.model.Note.Note;
+import com.whattodo.whattodoapp.security.CustomUserDetails;
 import com.whattodo.whattodoapp.service.NoteService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -16,19 +17,21 @@ public class NoteController {
 
     private final NoteService noteService;
 
-    @Autowired
     public NoteController(NoteService noteService) {
         this.noteService = noteService;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
-    public ResponseEntity<?> addNote(@RequestBody NoteRequest noteRequest, Principal principal) {
-        Note savedNote = noteService.addNote(principal.getName(), noteRequest);
+    public ResponseEntity<?> addNote(@RequestBody NoteRequest noteRequest,
+                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Note savedNote = noteService.addNote(userDetails, noteRequest);
         return ResponseEntity.ok("Note added with ID: " + savedNote.getId());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public List<Note> getNotes(Principal principal) {
-        return noteService.getNotes(principal.getName());
+    public List<Note> getNotes(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return noteService.getNotes(userDetails);
     }
 }

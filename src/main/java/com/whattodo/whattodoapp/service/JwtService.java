@@ -40,7 +40,7 @@ public class JwtService {
      * @return a signed JWT token
      */
     public String generateToken(String username, Map<String, Object> claims) {
-        long jwtExpirationMs = 86400000; // 1 day
+        long jwtExpirationMs = 43200000; // 12 hours
         return Jwts.builder()
                 .claims(claims)
                 .subject(username)
