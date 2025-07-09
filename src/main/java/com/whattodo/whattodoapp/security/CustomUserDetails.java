@@ -1,6 +1,6 @@
 package com.whattodo.whattodoapp.security;
 
-import com.whattodo.whattodoapp.model.User;
+import com.whattodo.whattodoapp.model.User.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

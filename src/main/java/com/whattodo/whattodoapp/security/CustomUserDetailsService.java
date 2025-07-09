@@ -1,7 +1,7 @@
 package com.whattodo.whattodoapp.security;
 
-import com.whattodo.whattodoapp.model.User;
-import com.whattodo.whattodoapp.model.UserRepository;
+import com.whattodo.whattodoapp.model.User.User;
+import com.whattodo.whattodoapp.model.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,4 +1,4 @@
-package com.whattodo.whattodoapp.model;
+package com.whattodo.whattodoapp.model.User;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -4,15 +4,14 @@ import com.whattodo.whattodoapp.dto.LoginRequest;
 import com.whattodo.whattodoapp.dto.RegisterRequest;
 import com.whattodo.whattodoapp.dto.ChangeEmailRequest;
 import com.whattodo.whattodoapp.dto.ChangePasswordRequest;
-import com.whattodo.whattodoapp.model.User;
-import com.whattodo.whattodoapp.model.UserRepository;
+import com.whattodo.whattodoapp.model.User.User;
+import com.whattodo.whattodoapp.model.User.UserRepository;
 import com.whattodo.whattodoapp.security.CustomUserDetailsService;
 import com.whattodo.whattodoapp.security.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.Collections;
 import java.util.HashMap;
