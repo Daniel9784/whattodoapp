@@ -95,6 +95,9 @@ public class AuthService {
         if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "New passwords do not match."));
         }
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "New password must be different from current password."));
+        }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         return ResponseEntity.ok(Collections.singletonMap("message", "Password updated successfully."));

@@ -6,6 +6,7 @@ import com.whattodo.whattodoapp.dto.ChangeEmailRequest;
 import com.whattodo.whattodoapp.dto.ChangePasswordRequest;
 import com.whattodo.whattodoapp.security.CustomUserDetails;
 import com.whattodo.whattodoapp.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
 
@@ -56,13 +57,13 @@ public class AuthController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/api/user/settings/change-email")
-    public ResponseEntity<?> changeEmail(@RequestBody ChangeEmailRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> changeEmail(@Valid @RequestBody ChangeEmailRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return authService.changeEmail(request, userDetails);
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/api/user/settings/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return authService.changePassword(request, userDetails);
     }
 }
