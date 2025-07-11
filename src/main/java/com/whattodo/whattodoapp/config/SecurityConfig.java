@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 @Configuration
 @EnableWebSecurity
@@ -54,8 +55,27 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(loginRateLimitFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers(headers -> headers
 
+                        // Content Security Policy (CSP)
+                .contentSecurityPolicy(csp -> csp
+                        .policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none';")
+                )
+                        // HTTP Strict Transport Security (HSTS)
+                .httpStrictTransportSecurity(hsts -> hsts
+                        .includeSubDomains(true)
+                        .maxAgeInSeconds(31536000)
+                )
+                        // X-Content-Type-Options
+                .addHeaderWriter(new StaticHeadersWriter("X-Content-Type-Options", "nosniff"))
+                .frameOptions(frame -> frame.sameOrigin())
+
+                        // Configures browsers NOT to send any referrer information on navigation
+                .referrerPolicy(referrer -> referrer
+                        .policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
+                )
+        );
         return http.build();
     }
 }

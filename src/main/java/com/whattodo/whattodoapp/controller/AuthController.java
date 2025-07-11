@@ -37,7 +37,7 @@ public class AuthController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/me")
+    @GetMapping("/api/me")
     public ResponseEntity<?> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
         var user = userDetails.getUser();
         Map<String, Object> response = new HashMap<>();
