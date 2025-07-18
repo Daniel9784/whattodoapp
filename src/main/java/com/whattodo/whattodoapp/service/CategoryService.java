@@ -2,7 +2,6 @@ package com.whattodo.whattodoapp.service;
 
 import com.whattodo.whattodoapp.model.Category.Category;
 import com.whattodo.whattodoapp.model.Category.CategoryRepository;
-import com.whattodo.whattodoapp.model.User.User;
 import com.whattodo.whattodoapp.security.CustomUserDetails;
 import org.springframework.stereotype.Service;
 

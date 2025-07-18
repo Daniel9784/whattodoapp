@@ -31,8 +31,14 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<?> addCategory(@AuthenticationPrincipal CustomUserDetails userDetails,
                                          @Valid @RequestBody CategoryRequest request) {
-        categoryService.addCategory(userDetails, request.getName());
-        return ResponseEntity.ok().build();
+        try {
+            categoryService.addCategory(userDetails, request.getName());
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(409)
+                    .body(e.getMessage());
+        }
     }
 
     @PreAuthorize("isAuthenticated()")
