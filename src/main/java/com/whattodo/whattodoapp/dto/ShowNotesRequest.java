@@ -12,4 +12,6 @@ public class ShowNotesRequest {
     private String category;
     private String content;
     private String createdAt;
+    private String dueDate;
+    private String dueTime;
 }

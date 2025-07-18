@@ -4,6 +4,8 @@ import com.whattodo.whattodoapp.model.User.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 @Entity
@@ -29,4 +31,8 @@ public class Note {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+
+    private LocalDate dueDate;
+
+    private LocalTime dueTime;
 }

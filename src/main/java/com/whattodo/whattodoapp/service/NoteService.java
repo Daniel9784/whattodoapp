@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Service
 public class NoteService {
@@ -29,6 +31,13 @@ public class NoteService {
         note.setContent(noteRequest.getContent());
         note.setUser(user);
 
+        if (noteRequest.getDueDate() != null && !noteRequest.getDueDate().isEmpty()) {
+            note.setDueDate(LocalDate.parse(noteRequest.getDueDate()));
+        }
+        if (noteRequest.getDueTime() != null && !noteRequest.getDueTime().isEmpty()) {
+            note.setDueTime(LocalTime.parse(noteRequest.getDueTime()));
+        }
+
         return noteRepository.save(note);
     }
 
@@ -41,11 +50,9 @@ public class NoteService {
             dto.setId(note.getId());
             dto.setCategory(note.getCategory());
             dto.setContent(note.getContent());
-            if (note.getCreatedAt() != null) {
-                dto.setCreatedAt(note.getCreatedAt().toString());
-            } else {
-                dto.setCreatedAt("unknown");
-            }
+            dto.setCreatedAt(note.getCreatedAt() != null ? note.getCreatedAt().toString() : "unknown");
+            dto.setDueDate(note.getDueDate() != null ? note.getDueDate().toString() : null);
+            dto.setDueTime(note.getDueTime() != null ? note.getDueTime().toString() : null);
             return dto;
         }).collect(Collectors.toList());
 
