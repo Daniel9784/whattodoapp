@@ -33,12 +33,18 @@ public class CategoryService {
         categoryRepository.save(cat);
     }
 
-    public void deleteCategory(CustomUserDetails userDetails, String name) {
-        Category cat = categoryRepository.findByUserIdAndName(userDetails.getUser().getId(), name);
+    public void deleteCategory(CustomUserDetails userDetails, String name, boolean deleteNotes) {
+        Long userId = userDetails.getUser().getId();
+        Category cat = categoryRepository.findByUserIdAndName(userId, name);
+
         if (cat != null) {
+            if (deleteNotes) {
+                noteService.deleteNotesByCategory(userId, name);
+            }
             categoryRepository.delete(cat);
         }
     }
+
 
     public void renameCategory(CustomUserDetails userDetails, String oldName, String newName) {
         Category cat = categoryRepository.findByUserIdAndName(userDetails.getUser().getId(), oldName);

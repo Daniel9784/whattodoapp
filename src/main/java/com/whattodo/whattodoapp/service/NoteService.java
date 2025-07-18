@@ -99,6 +99,12 @@ public class NoteService {
         }
         noteRepository.saveAll(notes);
     }
+    
+    @Transactional
+    public void deleteNotesByCategory(Long userId, String category) {
+        List<Note> notesToDelete = noteRepository.findByUserIdAndCategory(userId, category);
+        noteRepository.deleteAll(notesToDelete);
+    }
 
 
 }

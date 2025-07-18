@@ -47,10 +47,12 @@ public class CategoryController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{name}")
     public ResponseEntity<?> deleteCategory(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                            @PathVariable String name) {
-        categoryService.deleteCategory(userDetails, name);
+                                            @PathVariable String name,
+                                            @RequestParam(name = "deleteNotes", defaultValue = "false") boolean deleteNotes) {
+        categoryService.deleteCategory(userDetails, name, deleteNotes);
         return ResponseEntity.ok().build();
     }
+
 
     @PutMapping("/{oldName}")
     public ResponseEntity<?> renameCategory(@AuthenticationPrincipal CustomUserDetails userDetails,
