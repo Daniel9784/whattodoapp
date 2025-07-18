@@ -10,4 +10,6 @@ public class CategoryRequest {
     @NotBlank
     @Size(max = 10)
     private String name;
+
+    private boolean renameInNotes;
 }

@@ -10,9 +10,11 @@ import java.util.List;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final NoteService noteService;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, NoteService noteService) {
         this.categoryRepository = categoryRepository;
+        this.noteService = noteService;
     }
 
     public List<String> getCategories(CustomUserDetails userDetails) {
@@ -43,6 +45,9 @@ public class CategoryService {
         if (cat != null && !categoryRepository.existsByUserIdAndName(userDetails.getUser().getId(), newName)) {
             cat.setName(newName);
             categoryRepository.save(cat);
+
+
+            noteService.renameCategoryInNotes(userDetails, oldName, newName);
         } else {
             throw new IllegalArgumentException("Category not found or new name exists");
         }

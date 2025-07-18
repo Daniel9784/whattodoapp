@@ -6,6 +6,7 @@ import com.whattodo.whattodoapp.model.Note.Note;
 import com.whattodo.whattodoapp.model.Note.NoteRepository;
 import com.whattodo.whattodoapp.model.User.User;
 import com.whattodo.whattodoapp.security.CustomUserDetails;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
 
@@ -88,6 +89,17 @@ public class NoteService {
         }
         noteRepository.delete(note);
     }
+
+    @Transactional
+    public void renameCategoryInNotes(CustomUserDetails userDetails, String oldName, String newName) {
+        Long userId = userDetails.getUser().getId();
+        List<Note> notes = noteRepository.findByUserIdAndCategory(userId, oldName);
+        for (Note note : notes) {
+            note.setCategory(newName);
+        }
+        noteRepository.saveAll(notes);
+    }
+
 
 }
 
