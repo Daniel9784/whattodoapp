@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -35,5 +36,22 @@ public class NoteController {
     @GetMapping("/api/user/show-notes")
     public List<ShowNotesRequest> getNotes(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return noteService.getNotes(userDetails);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/api/user/edit-note/{id}")
+    public ResponseEntity<?> editNote(@PathVariable Long id,
+                                      @Valid @RequestBody NoteRequest noteRequest,
+                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
+        noteService.editNote(id, userDetails, noteRequest);
+        return ResponseEntity.ok("Note updated");
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/api/user/delete-note/{id}")
+    public ResponseEntity<?> deleteNote(@PathVariable Long id,
+                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        noteService.deleteNote(id, userDetails);
+        return ResponseEntity.ok("Note deleted");
     }
 }

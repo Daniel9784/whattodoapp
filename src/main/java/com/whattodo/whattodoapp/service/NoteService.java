@@ -7,6 +7,7 @@ import com.whattodo.whattodoapp.model.Note.NoteRepository;
 import com.whattodo.whattodoapp.model.User.User;
 import com.whattodo.whattodoapp.security.CustomUserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +57,36 @@ public class NoteService {
             return dto;
         }).collect(Collectors.toList());
 
+    }
+
+    public void editNote(Long id, CustomUserDetails userDetails, NoteRequest noteRequest) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Note not found"));
+        if (!note.getUser().getId().equals(userDetails.getUser().getId())) {
+            throw new AccessDeniedException("Not your note");
+        }
+        note.setCategory(noteRequest.getCategory());
+        note.setContent(noteRequest.getContent());
+        note.setDueDate(
+                noteRequest.getDueDate() != null && !noteRequest.getDueDate().isEmpty()
+                        ? LocalDate.parse(noteRequest.getDueDate())
+                        : null
+        );
+        note.setDueTime(
+                noteRequest.getDueTime() != null && !noteRequest.getDueTime().isEmpty()
+                        ? LocalTime.parse(noteRequest.getDueTime())
+                        : null
+        );
+        noteRepository.save(note);
+    }
+
+    public void deleteNote(Long id, CustomUserDetails userDetails) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Note not found"));
+        if (!note.getUser().getId().equals(userDetails.getUser().getId())) {
+            throw new AccessDeniedException("Not your note");
+        }
+        noteRepository.delete(note);
     }
 
 }
