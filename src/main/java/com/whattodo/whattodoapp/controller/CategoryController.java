@@ -53,7 +53,7 @@ public class CategoryController {
         return ResponseEntity.ok().build();
     }
 
-
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{oldName}")
     public ResponseEntity<?> renameCategory(@AuthenticationPrincipal CustomUserDetails userDetails,
                                             @PathVariable String oldName,
